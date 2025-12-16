@@ -1,15 +1,15 @@
 :root {
-  --bg-color: #f0f0f0b4;
-  --text-color: #333;
-  --highlight-color: teal;
-  --card-bg: rgba(255, 255, 255, 0.771);
+  --bg-color: rgba(255, 255, 255, 0.85);
+  --text-color: #2c3e50;
+  --highlight-color: #e67e22;
+  --card-bg: rgba(255, 255, 255, 0.9);
 }
 
 body.dark {
-  --bg-color: #1e1e1ec3;
-  --text-color: #f0f0f0;
-  --highlight-color: rgb(0, 212, 212);
-  --card-bg: #2c2c2c;
+  --bg-color: rgba(45, 52, 54, 0.9);
+  --text-color: #ddd6fe;
+  --highlight-color: #fbbf24;
+  --card-bg: rgba(55, 65, 81, 0.9);
 }
 
 body {
