@@ -23,7 +23,7 @@ function updateDateTime() {
   const now = new Date();
   const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const dateString = now.toLocaleDateString(undefined, dateOptions);
-  const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const timeString = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 
   document.getElementById("date-time").innerHTML = `It is <span class="highlight">${timeString}</span> on <span class="highlight">${dateString}</span>.`;
 }
@@ -41,7 +41,7 @@ async function fetchWeather(city = "St Louis") {
     );
     const data = await response.json();
     document.getElementById("weather-info").innerHTML =
-      `Today in <span class="highlight">${data.name}</span> it is <span class="highlight">${data.main.temp}°F</span> with a forecast of <span class="highlight">${data.weather[0].description}</span>.`;
+      `Today in <span class="highlight">${data.name}</span> it is <span class="highlight">${Math.round(data.main.temp)}°F</span> with a forecast of <span class="highlight">${data.weather[0].description}</span>.`;
   } catch {
     document.getElementById("weather-info").textContent = "Weather unavailable.";
   }
@@ -105,7 +105,9 @@ function loadTasks() {
     content.appendChild(span);
 
     const delBtn = document.createElement("button");
-    delBtn.textContent = "Delete";
+    delBtn.textContent = "🗑️";
+    delBtn.className = "delete-btn";
+    delBtn.title = "Delete task";
     delBtn.addEventListener("click", () => removeTask(index));
 
     li.appendChild(content);
@@ -161,7 +163,9 @@ function loadLinks() {
     a.target = "_blank";
 
     const delBtn = document.createElement("button");
-    delBtn.textContent = "Remove";
+    delBtn.textContent = "🗑️";
+    delBtn.className = "delete-btn";
+    delBtn.title = "Remove link";
     delBtn.addEventListener("click", () => removeLink(index));
 
     const handle = document.createElement("span");
@@ -265,6 +269,23 @@ document.getElementById("refresh-news").addEventListener("click", () => {
   fetchNews();
 });
 
+// Helper function for smart timestamp formatting
+function formatNewsTimestamp(dateString) {
+  const articleDate = new Date(dateString);
+  const today = new Date();
+
+  // Check if article is from today (same date)
+  const isToday = articleDate.toDateString() === today.toDateString();
+
+  if (isToday) {
+    // Show time for today's articles
+    return articleDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } else {
+    // Show date for older articles with 2-digit year
+    return articleDate.toLocaleDateString([], { month: 'numeric', day: 'numeric', year: '2-digit' });
+  }
+}
+
 // News Headlines
 async function fetchNews() {
   const newsList = document.getElementById("news-list");
@@ -306,8 +327,8 @@ async function fetchNews() {
 
         const time = document.createElement("small");
         if (pubDate) {
-          const date = new Date(pubDate);
-          time.textContent = ` (${date.toLocaleDateString()})`;
+          const formattedTime = formatNewsTimestamp(pubDate);
+          time.textContent = ` (${formattedTime})`;
           time.style.color = "var(--highlight-color)";
         }
 
@@ -347,8 +368,8 @@ async function fetchNews() {
 
           const time = document.createElement("small");
           if (pubDate) {
-            const date = new Date(pubDate);
-            time.textContent = ` (${date.toLocaleDateString()})`;
+            const formattedTime = formatNewsTimestamp(pubDate);
+            time.textContent = ` (${formattedTime})`;
             time.style.color = "var(--highlight-color)";
           }
 
@@ -377,7 +398,8 @@ async function fetchNews() {
           a.target = "_blank";
 
           const time = document.createElement("small");
-          time.textContent = ` (${created.toLocaleDateString()})`;
+          const formattedTime = formatNewsTimestamp(created);
+          time.textContent = ` (${formattedTime})`;
           time.style.color = "var(--highlight-color)";
 
           li.appendChild(a);
@@ -419,7 +441,7 @@ function loadTheme() {
 
 function updateThemeIcon(theme) {
   const icon = document.getElementById("toggle-theme");
-  icon.textContent = theme === "dark" ? "☀️" : "🌙";
+  icon.textContent = theme === "dark" ? "☀" : "☾";
 }
 
 document.getElementById("toggle-theme").addEventListener("click", () => {
@@ -449,6 +471,170 @@ async function setBackground() {
   }
 }
 
+// Detailed Weather & Forecast
+async function fetchDetailedWeather(city) {
+  const apiKey = "993ec09a81fd3b67589c0adfce79a875";
+
+  try {
+    console.log(`Fetching detailed weather for: ${city}`);
+
+    // Fetch current weather
+    const currentResponse = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${apiKey}`
+    );
+
+    if (!currentResponse.ok) {
+      throw new Error(`Current weather API error: ${currentResponse.status}`);
+    }
+
+    const currentData = await currentResponse.json();
+    console.log("Current weather data:", currentData);
+
+    // Fetch 3-day forecast
+    const forecastResponse = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=imperial&appid=${apiKey}`
+    );
+
+    if (!forecastResponse.ok) {
+      throw new Error(`Forecast API error: ${forecastResponse.status}`);
+    }
+
+    const forecastData = await forecastResponse.json();
+    console.log("Forecast data:", forecastData);
+
+    updateCurrentWeather(currentData);
+    updateForecast(forecastData);
+
+  } catch (error) {
+    console.error("Detailed weather fetch failed:", error);
+
+    // Update UI with error state
+    const currentTemp = document.getElementById("current-temp");
+    const currentDesc = document.getElementById("current-desc");
+    const feelsLike = document.getElementById("feels-like");
+    const humidity = document.getElementById("humidity");
+    const wind = document.getElementById("wind");
+
+    if (currentTemp) currentTemp.textContent = "N/A";
+    if (currentDesc) currentDesc.textContent = "Weather unavailable";
+    if (feelsLike) feelsLike.textContent = "N/A";
+    if (humidity) humidity.textContent = "N/A";
+    if (wind) wind.textContent = "N/A";
+  }
+}
+
+function updateCurrentWeather(data) {
+  console.log("Updating current weather with:", data);
+
+  const currentTemp = document.getElementById("current-temp");
+  const currentDesc = document.getElementById("current-desc");
+  const feelsLike = document.getElementById("feels-like");
+  const humidity = document.getElementById("humidity");
+  const wind = document.getElementById("wind");
+
+  if (currentTemp && data.main && data.main.temp !== undefined) {
+    currentTemp.textContent = `${Math.round(data.main.temp)}°`;
+    console.log("Set temperature:", Math.round(data.main.temp));
+  }
+
+  if (currentDesc) {
+    if (data.weather && data.weather[0] && data.weather[0].description) {
+      currentDesc.textContent = data.weather[0].description;
+      console.log("Set description:", data.weather[0].description);
+    } else {
+      console.error("Weather description not found in data:", data.weather);
+      currentDesc.textContent = "Unknown conditions";
+    }
+  } else {
+    console.error("Current description element not found");
+  }
+
+  if (feelsLike && data.main && data.main.feels_like !== undefined) {
+    feelsLike.textContent = `${Math.round(data.main.feels_like)}°`;
+    console.log("Set feels like:", Math.round(data.main.feels_like));
+  }
+
+  if (humidity && data.main && data.main.humidity !== undefined) {
+    humidity.textContent = `${data.main.humidity}%`;
+    console.log("Set humidity:", data.main.humidity);
+  }
+
+  if (wind && data.wind && data.wind.speed !== undefined) {
+    wind.textContent = `${Math.round(data.wind.speed)} mph`;
+    console.log("Set wind:", Math.round(data.wind.speed));
+  }
+}
+
+function updateForecast(data) {
+  console.log("Updating forecast with:", data);
+
+  const forecastContainer = document.getElementById("forecast-container");
+  if (!forecastContainer) {
+    console.error("Forecast container not found");
+    return;
+  }
+
+  forecastContainer.innerHTML = "";
+
+  if (!data.list || data.list.length === 0) {
+    console.error("No forecast data available");
+    forecastContainer.innerHTML = "<div>Forecast unavailable</div>";
+    return;
+  }
+
+  // Group forecast data by day and calculate daily highs/lows
+  const dailyData = {};
+
+  data.list.forEach(item => {
+    const date = new Date(item.dt * 1000);
+    const dateKey = date.toDateString();
+
+    if (!dailyData[dateKey]) {
+      dailyData[dateKey] = {
+        date: date,
+        temps: [],
+        weather: item.weather[0] // Use first weather condition of the day
+      };
+    }
+
+    dailyData[dateKey].temps.push(item.main.temp);
+  });
+
+  // Get next 3 days (skip today)
+  const today = new Date().toDateString();
+  const futureDays = Object.entries(dailyData)
+    .filter(([dateKey]) => dateKey !== today)
+    .slice(0, 3);
+
+  console.log("Future days data:", futureDays);
+
+  futureDays.forEach(([dateKey, dayData]) => {
+    const dayName = dayData.date.toLocaleDateString([], { weekday: 'short' });
+    const highTemp = Math.round(Math.max(...dayData.temps));
+    const lowTemp = Math.round(Math.min(...dayData.temps));
+    const desc = dayData.weather && dayData.weather.description ? dayData.weather.description : "Unknown";
+
+    const forecastDiv = document.createElement("div");
+    forecastDiv.className = "forecast-day";
+
+    forecastDiv.innerHTML = `
+      <div class="forecast-day-name">${dayName}</div>
+      <div class="forecast-temp">${highTemp}°<span class="temp-low">/${lowTemp}°</span></div>
+      <div class="forecast-desc">${desc}</div>
+    `;
+
+    forecastContainer.appendChild(forecastDiv);
+  });
+}
+
+// Add refresh forecast functionality
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("refresh-forecast")?.addEventListener("click", () => {
+    const city = localStorage.getItem("city") || "New York";
+    fetchDetailedWeather(city);
+  });
+});
+
 // Initialize
 setGreeting();
 fetchWeather();
@@ -458,3 +644,7 @@ fetchNews();
 fetchQuote();
 loadTheme();
 setBackground();
+
+// Initialize detailed weather
+const savedCity = localStorage.getItem("city") || "New York";
+fetchDetailedWeather(savedCity);

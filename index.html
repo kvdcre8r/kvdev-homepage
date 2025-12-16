@@ -14,8 +14,8 @@
         <div class="section-header">
           <h1 id="greeting">Hello!</h1>
           <div class="header-controls">
-            <button class="icon-btn" id="toggle-theme" title="Toggle theme">🌙</button>
-            <button class="icon-btn" id="edit-top" title="Edit name and location">✏️</button>
+            <button class="icon-btn" id="toggle-theme" title="Toggle theme">☾</button>
+            <button class="icon-btn" id="edit-top" title="Edit name and location">⚙</button>
           </div>
         </div>
         <div id="weather">
@@ -25,55 +25,98 @@
             <input type="text" id="city-input" placeholder="Enter city">
             <button id="get-weather">Get Weather</button>
           </div>
-          <p id="date-time"></p>
-          <p id="weather-info">Weather info will appear here</p>
+          <div class="greeting-info">
+            <p id="date-time"></p>
+            <p id="weather-info">Weather info will appear here</p>
+          </div>
         </div>
       </section>
 
-      <div class="row">
-        <!-- To-Do List -->
-        <section>
-          <div class="section-header">
-            <h2>My To-Do List</h2>
-            <button class="icon-btn" id="edit-tasks">✏️</button>
-          </div>
-          <div class="section-content">
-            <div class="edit-panel hidden" id="tasks-panel">
-              <input type="text" id="new-task" placeholder="Enter a task">
-              <button id="add-task">Add Task</button>
+      <div class="main-layout">
+        <!-- Left Content Area -->
+        <div class="main-content">
+          <!-- News Headlines -->
+          <section>
+            <div class="section-header">
+              <h2>Latest News</h2>
+              <button class="icon-btn" id="refresh-news" title="Refresh news">↻</button>
             </div>
-            <ul class="list" id="task-list"></ul>
-          </div>
-        </section>
-        <!-- Favorite Links -->
-        <section>
-          <div class="section-header">
-            <h2>Favorite Links</h2>
-            <button class="icon-btn" id="edit-links">✏️</button>
-          </div>
-          <div class="section-content">
-            <div class="edit-panel hidden" id="links-panel">
-              <input type="text" id="new-link-name" placeholder="Site name">
-              <input type="url" id="new-link-url" placeholder="https://example.com">
-              <button id="add-link">Add Link</button>
+            <div class="section-content">
+              <ul class="list" id="news-list">
+                <li>Loading news headlines...</li>
+              </ul>
             </div>
-            <ul class="list" id="links-list"></ul>
-          </div>
-        </section>
+          </section>
+
+          <!-- Detailed Weather -->
+          <section>
+            <div class="section-header">
+              <h2>Weather Forecast</h2>
+              <button class="icon-btn" id="refresh-forecast" title="Refresh forecast">↻</button>
+            </div>
+            <div class="section-content">
+              <div id="current-weather" class="weather-current">
+                <div class="weather-today">
+                  <div class="weather-main">
+                    <div class="temp-display" id="current-temp">--°</div>
+                    <div class="weather-desc" id="current-desc">Loading...</div>
+                  </div>
+                  <div class="weather-details" id="weather-details">
+                    <div class="detail-item">
+                      <span class="detail-label">Feels like</span>
+                      <span class="detail-value" id="feels-like">--°</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Humidity</span>
+                      <span class="detail-value" id="humidity">--%</span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-label">Wind</span>
+                      <span class="detail-value" id="wind">-- mph</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="forecast-container" class="forecast-grid">
+                <!-- Forecast days will be inserted here -->
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="sidebar">
+          <!-- To-Do List -->
+          <section>
+            <div class="section-header">
+              <h2>My To-Do List</h2>
+              <button class="icon-btn" id="edit-tasks">⚙</button>
+            </div>
+            <div class="section-content">
+              <div class="edit-panel hidden" id="tasks-panel">
+                <input type="text" id="new-task" placeholder="Enter a task">
+                <button id="add-task">Add Task</button>
+              </div>
+              <ul class="list" id="task-list"></ul>
+            </div>
+          </section>
+          <!-- Favorite Links -->
+          <section>
+            <div class="section-header">
+              <h2>Favorite Links</h2>
+              <button class="icon-btn" id="edit-links">⚙</button>
+            </div>
+            <div class="section-content">
+              <div class="edit-panel hidden" id="links-panel">
+                <input type="text" id="new-link-name" placeholder="Site name">
+                <input type="url" id="new-link-url" placeholder="https://example.com">
+                <button id="add-link">Add Link</button>
+              </div>
+              <ul class="list" id="links-list"></ul>
+            </div>
+          </section>
+        </div>
       </div>
-
-      <!-- News Headlines -->
-      <section>
-        <div class="section-header">
-          <h2>Latest News</h2>
-          <button class="icon-btn" id="refresh-news" title="Refresh news">🔄</button>
-        </div>
-        <div class="section-content">
-          <ul class="list" id="news-list">
-            <li>Loading news headlines...</li>
-          </ul>
-        </div>
-      </section>
 
       <!-- Quote -->
       <section>
