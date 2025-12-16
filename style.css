@@ -1,0 +1,158 @@
+:root {
+  --bg-color: #f0f0f0b4;
+  --text-color: #333;
+  --highlight-color: teal;
+  --card-bg: rgba(255, 255, 255, 0.771);
+}
+
+body.dark {
+  --bg-color: #1e1e1ec3;
+  --text-color: #f0f0f0;
+  --highlight-color: rgb(0, 212, 212);
+  --card-bg: #2c2c2c;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg-color) no-repeat center center fixed;
+  background-size: cover;
+  color: var(--text-color);
+  margin: 0;
+  padding: 20px;
+  transition: background 0.5s, color 0.5s;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+}
+
+section {
+  background: var(--bg-color);
+  padding: 0 20px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+  flex-grow: 1;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .section-content {
+    border-radius: 5px;
+    padding: 15px;
+    background: var(--highlight-color);
+  }
+}
+
+.header-controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.highlight {
+  color: var(--highlight-color);
+  font-weight: bold;
+}
+
+.icon-btn {
+  font-size: 1.2rem;
+  background: var(--bg-color);
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 6px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.icon-btn:hover {
+  background: var(--highlight-color);
+  color: white;
+  transform: scale(1.1);
+}
+
+.row {
+  display: flex;
+  gap: 20px;
+}
+
+.edit-panel {
+  margin-top: 10px;
+  background: var(--card-bg);
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.hidden {
+  display: none;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-color);
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 5px;
+
+    &.completed span {
+      text-decoration: line-through;
+      color: darkgray;
+    }
+  }
+
+  a {
+    text-decoration: none;
+    color: var(--text-color);
+    flex-grow: 1;
+    text-align: left;
+  }
+
+  button {
+    margin-left: 10px;
+    border-radius: 3px;
+  }
+}
+
+.task-content {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+
+  span {
+    text-align: left;
+  }
+}
+
+.drag-handle {
+  cursor: grab;
+  margin-right: 10px;
+  font-size: 1.2rem;
+  color: var(--highlight-color);
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+#quote {
+  padding-top: 25px;
+  font-style: italic;
+  margin-top: 0;
+}
