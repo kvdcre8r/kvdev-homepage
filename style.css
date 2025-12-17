@@ -1,3 +1,9 @@
+/****************************************
+GLOBAL SETTINGS
+****************************************/
+/********************
+Variables
+********************/
 :root {
   --bg-color: rgba(255, 255, 255, 0.85);
   --text-color: #2c3e50;
@@ -12,6 +18,9 @@ body.dark {
   --card-bg: rgba(55, 65, 81, 0.9);
 }
 
+/********************
+General
+********************/
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: var(--bg-color) no-repeat center center fixed;
@@ -20,20 +29,19 @@ body {
   margin: 0;
   padding: 20px;
   transition: background 0.5s, color 0.5s;
-}
-
-.container {
   max-width: 1200px;
   margin: auto;
-}
 
-section {
-  background: var(--bg-color);
-  padding: 0 20px 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  margin-bottom: 20px;
-  flex-grow: 1;
+  header,
+  footer,
+  section {
+    background: var(--bg-color);
+    padding: 0 20px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    flex-grow: 1;
+  }
 
   .section-header {
     display: flex;
@@ -46,8 +54,48 @@ section {
     padding: 15px;
     background: var(--highlight-color);
   }
+
+  .icon-btn {
+    font-size: 1.2rem;
+    background: var(--bg-color);
+    border: none;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--text-color);
+    padding: 6px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s, transform 0.2s;
+  }
+
+  .icon-btn:hover {
+    background: var(--highlight-color);
+    color: var(--bg-color);
+    transform: scale(1.1);
+  }
+
+  .edit-panel {
+    margin-top: 10px;
+    background: var(--card-bg);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  .hidden {
+    display: none;
+  }
 }
 
+/****************************************
+LANDMARKS
+****************************************/
+/********************
+Header
+********************/
 .header-controls {
   display: flex;
   gap: 10px;
@@ -59,7 +107,6 @@ section {
   font-weight: bold;
 }
 
-/* Enhanced Header Styling */
 #greeting {
   font-size: 2.2rem;
   font-weight: 800;
@@ -71,7 +118,6 @@ section {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Fallback for browsers that don't support background-clip */
 @supports not (-webkit-background-clip: text) {
   #greeting {
     color: var(--text-color);
@@ -97,54 +143,25 @@ section {
   }
 }
 
-.icon-btn {
-  font-size: 1.2rem;
-  background: var(--bg-color);
-  border: none;
-  cursor: pointer;
-  border-radius: 50%;
-  padding: 6px;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s, transform 0.2s;
-}
-
-.icon-btn:hover {
-  background: var(--highlight-color);
-  color: white;
-  transform: scale(1.1);
-}
-
-body.dark .icon-btn {
-  background: rgba(255, 255, 255, 0.15);
-  color: var(--text-color);
-}
-
-body.dark .icon-btn:hover {
-  background: var(--highlight-color);
-  color: var(--bg-color);
-  transform: scale(1.1);
-}
-
-.main-layout {
+/********************
+Main
+********************/
+main {
   display: flex;
   gap: 20px;
   align-items: flex-start;
-}
 
-.main-content {
-  flex: 1;
-  min-width: 0;
-}
+  .main-content {
+    flex: 1;
+    min-width: 0;
+  }
 
-.sidebar {
-  flex: 0 0 320px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  .sidebar {
+    flex: 0 0 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
 }
 
 .row {
@@ -152,19 +169,7 @@ body.dark .icon-btn:hover {
   gap: 20px;
 }
 
-.edit-panel {
-  margin-top: 10px;
-  background: var(--card-bg);
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-.hidden {
-  display: none;
-}
-
-.list {
+ul {
   list-style: none;
   padding: 0;
 
@@ -248,7 +253,9 @@ body.dark .icon-btn:hover {
   margin-top: 0;
 }
 
-/* Detailed Weather Section */
+/********************
+Weather Section
+********************/
 .weather-current {
   margin-bottom: 20px;
 }
@@ -263,19 +270,51 @@ body.dark .icon-btn:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 0 10px 10px;
+  padding: 20px;
+  border: var(--bg-color) 2px solid;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  min-width: 150px;
+  color: #2c3e50;
+}
+
+/* Temperature-based background colors */
+.weather-main.very-cold {
+  background: linear-gradient(135deg, #6fa8dc 0%, #4a90e2 100%);
+}
+
+.weather-main.cold {
+  background: linear-gradient(135deg, #a2c8f0 0%, #7bb3f0 100%);
+}
+
+.weather-main.cool {
+  background: linear-gradient(135deg, #e8f4f8 0%, #d4e7f1 100%);
+}
+
+.weather-main.mild {
+  background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+}
+
+.weather-main.warm {
+  background: linear-gradient(135deg, #ffe0b3 0%, #ffcc80 100%);
+}
+
+.weather-main.hot {
+  background: linear-gradient(135deg, #ffab7a 0%, #ff8a50 100%);
+}
+
+.weather-main.very-hot {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
 }
 
 .temp-display {
   font-size: 3rem;
   font-weight: bold;
-  color: var(--text-color);
   margin-bottom: 5px;
 }
 
 .weather-desc {
   font-size: 1.1rem;
-  color: var(--text-color);
   font-weight: 500;
   text-transform: capitalize;
   opacity: 0.9;
@@ -329,6 +368,20 @@ body.dark .icon-btn:hover {
   background: var(--bg-color);
 }
 
+.forecast-day.today {
+  background: var(--highlight-color);
+  color: white;
+  font-weight: 500;
+}
+
+.forecast-day.today .forecast-desc {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.forecast-day.today .temp-low {
+  color: rgba(255, 255, 255, 0.8);
+}
+
 body.dark .detail-item {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -363,22 +416,11 @@ body.dark .forecast-day {
   text-transform: capitalize;
 }
 
-/* Responsive design for weather */
+/****************************************
+RESPONSIVE DESIGN
+****************************************/
 @media (max-width: 768px) {
-  .weather-today {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .forecast-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .main-layout {
+  main {
     flex-direction: column;
   }
 
@@ -390,6 +432,16 @@ body.dark .forecast-day {
     flex: none;
     width: 100%;
     margin-bottom: 10px;
+  }
+
+  .weather-today {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .forecast-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
 }

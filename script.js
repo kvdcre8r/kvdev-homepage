@@ -533,8 +533,33 @@ function updateCurrentWeather(data) {
   const wind = document.getElementById("wind");
 
   if (currentTemp && data.main && data.main.temp !== undefined) {
-    currentTemp.textContent = `${Math.round(data.main.temp)}°`;
-    console.log("Set temperature:", Math.round(data.main.temp));
+    const temp = Math.round(data.main.temp);
+    currentTemp.textContent = `${temp}°`;
+    console.log("Set temperature:", temp);
+
+    // Apply temperature-based styling
+    const weatherMain = document.querySelector('.weather-main');
+    if (weatherMain) {
+      // Remove existing temperature classes
+      weatherMain.classList.remove('very-cold', 'cold', 'cool', 'mild', 'warm', 'hot', 'very-hot');
+
+      // Add appropriate class based on temperature
+      if (temp <= 32) {
+        weatherMain.classList.add('very-cold');
+      } else if (temp <= 50) {
+        weatherMain.classList.add('cold');
+      } else if (temp <= 65) {
+        weatherMain.classList.add('cool');
+      } else if (temp <= 75) {
+        weatherMain.classList.add('mild');
+      } else if (temp <= 85) {
+        weatherMain.classList.add('warm');
+      } else if (temp <= 95) {
+        weatherMain.classList.add('hot');
+      } else {
+        weatherMain.classList.add('very-hot');
+      }
+    }
   }
 
   if (currentDesc) {
@@ -600,8 +625,21 @@ function updateForecast(data) {
     dailyData[dateKey].temps.push(item.main.temp);
   });
 
-  // Get next 3 days (skip today)
+  // Update today's high/low in current weather section
   const today = new Date().toDateString();
+  const todayData = dailyData[today];
+
+  if (todayData && todayData.temps.length > 0) {
+    const todayHigh = Math.round(Math.max(...todayData.temps));
+    const todayLow = Math.round(Math.min(...todayData.temps));
+
+    const todayHighLowElement = document.getElementById("today-highlow");
+    if (todayHighLowElement) {
+      todayHighLowElement.textContent = `H: ${todayHigh}° L: ${todayLow}°`;
+    }
+  }
+
+  // Get next 3 days (skip today)
   const futureDays = Object.entries(dailyData)
     .filter(([dateKey]) => dateKey !== today)
     .slice(0, 3);
