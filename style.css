@@ -58,8 +58,8 @@ body {
   .icon-btn {
     font-size: 1.2rem;
     background: var(--bg-color);
-    border: none;
     cursor: pointer;
+    border: 1px solid var(--text-color);
     border-radius: 50%;
     color: var(--text-color);
     padding: 6px;
@@ -74,6 +74,7 @@ body {
   .icon-btn:hover {
     background: var(--highlight-color);
     color: var(--bg-color);
+    border-color: var(--bg-color);
     transform: scale(1.1);
   }
 
@@ -247,15 +248,7 @@ ul {
   }
 }
 
-#quote {
-  padding-top: 25px;
-  font-style: italic;
-  margin-top: 0;
-}
-
-/********************
-Weather Section
-********************/
+/* Weather Section */
 .weather-current {
   margin-bottom: 20px;
 }
@@ -278,7 +271,7 @@ Weather Section
   color: #2c3e50;
 }
 
-/* Temperature-based background colors */
+/* temperature-based background colors */
 .weather-main.very-cold {
   background: linear-gradient(135deg, #6fa8dc 0%, #4a90e2 100%);
 }
@@ -416,6 +409,16 @@ body.dark .forecast-day {
   text-transform: capitalize;
 }
 
+/********************
+Footer
+********************/
+#quote {
+  padding-top: 25px;
+  font-style: italic;
+  margin-top: 0;
+  text-align: center;
+}
+
 /****************************************
 RESPONSIVE DESIGN
 ****************************************/
@@ -444,4 +447,22 @@ RESPONSIVE DESIGN
     gap: 8px;
   }
 
+}
+
+@media (max-width: 576px) {
+  #greeting {
+    font-size: 1.8rem;
+  }
+
+  #news-list {
+    li {
+      flex-direction: column;
+
+      small {
+        width: 100%;
+        text-align: right;
+        margin-top: 5px;
+      }
+    }
+  }
 }
