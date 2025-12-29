@@ -18,6 +18,17 @@ document.getElementById("save-username").addEventListener("click", () => {
   }
 });
 
+// Add Enter key support for username input
+document.getElementById("username-input").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    const name = document.getElementById("username-input").value;
+    if (name) {
+      localStorage.setItem("username", name);
+      setGreeting();
+    }
+  }
+});
+
 // Date + Time
 function updateDateTime() {
   const now = new Date();
@@ -28,30 +39,15 @@ function updateDateTime() {
   document.getElementById("date-time").innerHTML = `It is <span class="highlight">${timeString}</span> on <span class="highlight">${dateString}</span>.`;
 }
 
-// Run immediately and then every second
+// Run immediately and then every minute
 updateDateTime();
 setInterval(updateDateTime, 60000);
-
-// Weather
-async function fetchWeather(city = "St Louis") {
-  const apiKey = "993ec09a81fd3b67589c0adfce79a875"; // OpenWeatherMap
-  try {
-    const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=${apiKey}`
-    );
-    const data = await response.json();
-    document.getElementById("weather-info").innerHTML =
-      `Today in <span class="highlight">${data.name}</span> it is <span class="highlight">${Math.round(data.main.temp)}°F</span> with a forecast of <span class="highlight">${data.weather[0].description}</span>.`;
-  } catch {
-    document.getElementById("weather-info").textContent = "Weather unavailable.";
-  }
-}
 
 // Load saved city or default
 function loadCity() {
   const savedCity = localStorage.getItem("city") || "New York";
   document.getElementById("city-input").value = savedCity;
-  fetchWeather(savedCity);
+  fetchDetailedWeather(savedCity);
 }
 
 // Save city when user clicks
@@ -59,23 +55,23 @@ document.getElementById("get-weather").addEventListener("click", () => {
   const city = document.getElementById("city-input").value;
   if (city) {
     localStorage.setItem("city", city);
-    fetchWeather(city);
+    fetchDetailedWeather(city);
+  }
+});
+
+// Add Enter key support for city input
+document.getElementById("city-input").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    const city = document.getElementById("city-input").value;
+    if (city) {
+      localStorage.setItem("city", city);
+      fetchDetailedWeather(city);
+    }
   }
 });
 
 // Initialize
 loadCity();
-
-// Clock
-function updateClock() {
-  const now = new Date();
-  const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  const weatherInfo = document.getElementById("weather-info");
-  if (weatherInfo.textContent) {
-    weatherInfo.textContent = weatherInfo.textContent.split(" — ")[0] +
-      ` — ${timeString} — ` + weatherInfo.textContent.split(" — ")[1];
-  }
-}
 
 // To-Do List
 function loadTasks() {
@@ -104,14 +100,30 @@ function loadTasks() {
     content.appendChild(handle);
     content.appendChild(span);
 
+    // Button container for edit and delete
+    const buttonContainer = document.createElement("div");
+    buttonContainer.className = "task-buttons";
+
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "✎";
+    editBtn.className = "edit-btn";
+    editBtn.title = "Edit task";
+    editBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      editTask(index, span);
+    });
+
     const delBtn = document.createElement("button");
     delBtn.textContent = "🗑️";
     delBtn.className = "delete-btn";
     delBtn.title = "Delete task";
     delBtn.addEventListener("click", () => removeTask(index));
 
+    buttonContainer.appendChild(editBtn);
+    buttonContainer.appendChild(delBtn);
+
     li.appendChild(content);
-    li.appendChild(delBtn);
+    li.appendChild(buttonContainer);
     list.appendChild(li);
   });
 
@@ -145,7 +157,57 @@ function removeTask(index) {
   loadTasks();
 }
 
+function editTask(index, spanElement) {
+  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  const currentText = tasks[index].text;
+
+  // Create input field
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = currentText;
+  input.className = "edit-input";
+
+  // Replace span with input
+  spanElement.style.display = "none";
+  spanElement.parentNode.insertBefore(input, spanElement);
+  input.focus();
+  input.select();
+
+  function saveEdit() {
+    const newText = input.value.trim();
+    if (newText && newText !== currentText) {
+      tasks[index].text = newText;
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+    loadTasks();
+  }
+
+  function cancelEdit() {
+    spanElement.style.display = "";
+    input.remove();
+  }
+
+  // Save on Enter, cancel on Escape
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      saveEdit();
+    } else if (e.key === "Escape") {
+      cancelEdit();
+    }
+  });
+
+  // Save on blur (when clicking outside)
+  input.addEventListener("blur", saveEdit);
+}
+
 document.getElementById("add-task").addEventListener("click", addTask);
+
+// Add Enter key support for new task input
+document.getElementById("new-task").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    addTask();
+  }
+});
 
 // Favorite Links
 function loadLinks() {
@@ -162,11 +224,28 @@ function loadLinks() {
     a.textContent = link.name;
     a.target = "_blank";
 
+    // Button container for edit and delete
+    const buttonContainer = document.createElement("div");
+    buttonContainer.className = "link-buttons";
+
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "✎";
+    editBtn.className = "edit-btn";
+    editBtn.title = "Edit link";
+    editBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      editLink(index, li, a);
+    });
+
     const delBtn = document.createElement("button");
     delBtn.textContent = "🗑️";
     delBtn.className = "delete-btn";
     delBtn.title = "Remove link";
     delBtn.addEventListener("click", () => removeLink(index));
+
+    buttonContainer.appendChild(editBtn);
+    buttonContainer.appendChild(delBtn);
 
     const handle = document.createElement("span");
     handle.className = "drag-handle";
@@ -175,7 +254,7 @@ function loadLinks() {
     li.prepend(handle);
 
     li.appendChild(a);
-    li.appendChild(delBtn);
+    li.appendChild(buttonContainer);
     list.appendChild(li);
   });
 
@@ -240,6 +319,11 @@ function addLink() {
   const links = JSON.parse(localStorage.getItem("links")) || [];
   links.push({ name, url });
   localStorage.setItem("links", JSON.stringify(links));
+
+  // Clear inputs after adding
+  document.getElementById("new-link-name").value = "";
+  document.getElementById("new-link-url").value = "";
+
   loadLinks();
 }
 
@@ -250,7 +334,89 @@ function removeLink(index) {
   loadLinks();
 }
 
+function editLink(index, liElement, aElement) {
+  const links = JSON.parse(localStorage.getItem("links")) || [];
+  const currentName = links[index].name;
+  const currentUrl = links[index].url;
+
+  // Create input fields
+  const nameInput = document.createElement("input");
+  nameInput.type = "text";
+  nameInput.value = currentName;
+  nameInput.className = "edit-input";
+  nameInput.placeholder = "Link name";
+
+  const urlInput = document.createElement("input");
+  urlInput.type = "url";
+  urlInput.value = currentUrl;
+  urlInput.className = "edit-input";
+  urlInput.placeholder = "Link URL";
+
+  const editContainer = document.createElement("div");
+  editContainer.className = "edit-container";
+  editContainer.appendChild(nameInput);
+  editContainer.appendChild(urlInput);
+
+  // Hide original link and insert edit form
+  aElement.style.display = "none";
+  liElement.insertBefore(editContainer, aElement);
+  nameInput.focus();
+  nameInput.select();
+
+  function saveEdit() {
+    const newName = nameInput.value.trim();
+    const newUrl = urlInput.value.trim();
+
+    if (newName && newUrl && (newName !== currentName || newUrl !== currentUrl)) {
+      links[index].name = newName;
+      links[index].url = newUrl;
+      localStorage.setItem("links", JSON.stringify(links));
+    }
+    loadLinks();
+  }
+
+  function cancelEdit() {
+    aElement.style.display = "";
+    editContainer.remove();
+  }
+
+  // Save on Enter in either input
+  [nameInput, urlInput].forEach(input => {
+    input.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        saveEdit();
+      } else if (e.key === "Escape") {
+        cancelEdit();
+      }
+    });
+  });
+
+  // Save on blur from the container
+  let blurTimeout;
+  editContainer.addEventListener("focusout", (e) => {
+    clearTimeout(blurTimeout);
+    blurTimeout = setTimeout(() => {
+      if (!editContainer.contains(document.activeElement)) {
+        saveEdit();
+      }
+    }, 100);
+  });
+}
+
 document.getElementById("add-link").addEventListener("click", addLink);
+
+// Add Enter key support for link inputs
+document.getElementById("new-link-name").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    addLink();
+  }
+});
+
+document.getElementById("new-link-url").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    addLink();
+  }
+});
 
 // Toggle panels
 document.getElementById("edit-top").addEventListener("click", () => {
@@ -263,6 +429,18 @@ document.getElementById("edit-tasks").addEventListener("click", () => {
 
 document.getElementById("edit-links").addEventListener("click", () => {
   document.getElementById("links-panel").classList.toggle("hidden");
+});
+// Close panel buttons
+document.getElementById("close-top-panel").addEventListener("click", function () {
+  document.getElementById("top-panel").classList.add("hidden");
+});
+
+document.getElementById("close-tasks-panel").addEventListener("click", function () {
+  document.getElementById("tasks-panel").classList.add("hidden");
+});
+
+document.getElementById("close-links-panel").addEventListener("click", function () {
+  document.getElementById("links-panel").classList.add("hidden");
 });
 
 document.getElementById("refresh-news").addEventListener("click", () => {
@@ -526,6 +704,13 @@ async function fetchDetailedWeather(city) {
 function updateCurrentWeather(data) {
   console.log("Updating current weather with:", data);
 
+  // Update header weather info
+  const weatherInfo = document.getElementById("weather-info");
+  if (weatherInfo && data.name && data.main && data.main.temp !== undefined && data.weather && data.weather[0]) {
+    weatherInfo.innerHTML =
+      `Today in <span class="highlight">${data.name}</span> it is <span class="highlight">${Math.round(data.main.temp)}°F</span> with a forecast of <span class="highlight">${data.weather[0].description}</span>.`;
+  }
+
   const currentTemp = document.getElementById("current-temp");
   const currentDesc = document.getElementById("current-desc");
   const feelsLike = document.getElementById("feels-like");
@@ -673,9 +858,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Initialize
+// Initialize all features
 setGreeting();
-fetchWeather();
 loadTasks();
 loadLinks();
 fetchNews();
@@ -683,6 +867,6 @@ fetchQuote();
 loadTheme();
 setBackground();
 
-// Initialize detailed weather
+// Initialize detailed weather with saved city
 const savedCity = localStorage.getItem("city") || "New York";
 fetchDetailedWeather(savedCity);
