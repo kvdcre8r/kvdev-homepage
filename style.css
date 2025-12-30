@@ -251,14 +251,8 @@ ul {
 .task-content {
   display: flex;
   align-items: center;
-
-  span {
-    cursor: pointer;
-    flex-grow: 1;
-  }
+  cursor: pointer;
 }
-
-
 
 .edit-input {
   background: var(--card-bg);
