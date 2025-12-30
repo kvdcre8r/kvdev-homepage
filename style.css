@@ -250,6 +250,7 @@ ul {
 
 .task-content {
   display: flex;
+  align-items: center;
 
   span {
     cursor: pointer;
