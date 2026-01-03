@@ -36,7 +36,7 @@
 
       <div class="main-content">
         <!-- News Headlines -->
-        <section>
+        <section class="news-section">
           <div class="section-header">
             <h2>Latest News</h2>
             <button class="icon-btn" id="refresh-news" title="Refresh news">↻</button>
@@ -55,9 +55,10 @@
             <button class="icon-btn" id="refresh-forecast" title="Refresh forecast">↻</button>
           </div>
           <div class="section-content">
+            <div id="weather-timestamp"></div>
             <div id="current-weather" class="weather-current">
               <div class="weather-today">
-                <div class="weather-main">
+                <div class="weather-main" title="Click to visit OpenWeatherMap">
                   <div class="temp-display" id="current-temp">--°</div>
                   <div class="weather-desc" id="current-desc">Loading...</div>
                   <div class="today-highlow" id="today-highlow">H: --° L: --°</div>

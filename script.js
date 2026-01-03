@@ -356,6 +356,7 @@ async function fetchDetailedWeather(city) {
 
     updateCurrentWeather(currentData);
     updateForecast(forecastData);
+    updateWeatherTimestamp();
 
   } catch (error) {
     console.error("Detailed weather fetch failed:", error);
@@ -372,6 +373,19 @@ async function fetchDetailedWeather(city) {
     if (feelsLike) feelsLike.textContent = "N/A";
     if (humidity) humidity.textContent = "N/A";
     if (wind) wind.textContent = "N/A";
+  }
+}
+
+// Update weather timestamp
+function updateWeatherTimestamp() {
+  const timestamp = document.getElementById("weather-timestamp");
+  if (timestamp) {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    timestamp.textContent = `Last updated: ${timeString}`;
   }
 }
 
@@ -533,8 +547,23 @@ const refreshForecastBtn = document.getElementById("refresh-forecast");
 if (refreshForecastBtn) {
   refreshForecastBtn.addEventListener("click", () => {
     console.log("Refresh forecast button clicked"); // Debug log
+
+    // Show loading state
+    const timestamp = document.getElementById("weather-timestamp");
+    if (timestamp) {
+      timestamp.textContent = "Refreshing...";
+    }
+
     const city = localStorage.getItem("city") || "New York";
     fetchDetailedWeather(city);
+  });
+}
+
+// Make weather-main clickable to link to OpenWeatherMap
+const weatherMain = document.querySelector('.weather-main');
+if (weatherMain) {
+  weatherMain.addEventListener('click', () => {
+    window.open('https://openweathermap.org/', '_blank');
   });
 }
 
