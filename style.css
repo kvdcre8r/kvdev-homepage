@@ -166,12 +166,6 @@ Header
   }
 }
 
-@media (max-width: 1000px) {
-  .greeting-info {
-    display: block;
-  }
-}
-
 /********************
 Main
 ********************/
@@ -202,7 +196,7 @@ ul {
   li {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     background: var(--bg-color);
     margin: 5px 0;
     padding: 8px;
@@ -297,6 +291,82 @@ ul {
 
   &:active {
     cursor: grabbing;
+  }
+}
+
+/* SEARCH BAR SECTION */
+.search-container {
+  display: flex;
+  gap: 8px;
+}
+
+#search-input {
+  flex: 1;
+  min-width: 100px;
+  padding: 8px;
+  border: 1px solid var(--text-color);
+  border-radius: 5px;
+  font-size: 0.9rem;
+  background: var(--bg-color);
+  color: var(--text-color);
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  box-sizing: border-box;
+}
+
+#search-input:focus {
+  border-color: var(--highlight-color);
+  box-shadow: 0 0 0 2px rgba(231, 126, 34, 0.15);
+}
+
+body.dark #search-input:focus {
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.15);
+}
+
+.search-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.search-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--text-color);
+  border-radius: 6px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(0.3);
+    margin: 0;
+  }
+
+  body.dark & img {
+    filter: brightness(0) invert(0.8);
+  }
+
+  &:hover {
+    background: var(--highlight-color);
+    color: var(--bg-color);
+    border-color: var(--bg-color);
+    transform: scale(1.05);
+
+    img {
+      filter: brightness(0) invert(0.8);
+    }
+
+    body.dark & img {
+      filter: brightness(0) invert(0.3);
+    }
   }
 }
 
@@ -513,6 +583,12 @@ Footer
 /****************************************
 RESPONSIVE DESIGN
 ****************************************/
+@media (max-width: 1000px) {
+  .greeting-info {
+    display: block;
+  }
+}
+
 @media (max-width: 768px) {
   main {
     flex-direction: column;
@@ -543,6 +619,19 @@ RESPONSIVE DESIGN
 @media (max-width: 576px) {
   #greeting {
     font-size: 1.8rem;
+  }
+
+  .search-container {
+    flex-direction: column;
+  }
+
+  .search-buttons {
+    justify-content: space-between;
+  }
+
+  .search-btn {
+    flex: 1;
+    min-width: 44px;
   }
 
   #news-list {

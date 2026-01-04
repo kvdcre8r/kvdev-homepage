@@ -138,6 +138,63 @@ document.getElementById("toggle-theme").addEventListener("click", () => {
   updateThemeIcon(newTheme);
 });
 
+//** SEARCH BAR **//
+const searchInput = document.getElementById('search-input');
+const googleSearchBtn = document.getElementById('google-search');
+const duckduckgoSearchBtn = document.getElementById('duckduckgo-search');
+const youtubeSearchBtn = document.getElementById('youtube-search');
+const wikipediaSearchBtn = document.getElementById('wikipedia-search');
+
+function performSearch(engine) {
+  const query = searchInput.value.trim();
+  if (!query) return;
+
+  let searchUrl;
+  switch (engine) {
+    case 'google':
+      searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+      break;
+    case 'duckduckgo':
+      searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+      break;
+    case 'youtube':
+      searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+      break;
+    case 'wikipedia':
+      searchUrl = `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(query)}`;
+      break;
+  }
+
+  window.open(searchUrl, '_blank');
+  searchInput.value = ''; // Clear the input
+}
+
+// Search button event listeners
+if (googleSearchBtn) {
+  googleSearchBtn.addEventListener('click', () => performSearch('google'));
+}
+
+if (duckduckgoSearchBtn) {
+  duckduckgoSearchBtn.addEventListener('click', () => performSearch('duckduckgo'));
+}
+
+if (youtubeSearchBtn) {
+  youtubeSearchBtn.addEventListener('click', () => performSearch('youtube'));
+}
+
+if (wikipediaSearchBtn) {
+  wikipediaSearchBtn.addEventListener('click', () => performSearch('wikipedia'));
+}
+
+// Enter key support
+if (searchInput) {
+  searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      performSearch('google'); // Default to Google on Enter
+    }
+  });
+}
+
 //** NEWS HEADLINES **//
 async function fetchNews() {
   const newsList = document.getElementById("news-list");
