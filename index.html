@@ -10,14 +10,18 @@
   <body>
 
     <header>
-      <div class="section-header">
-        <h1 id="greeting">Hello!</h1>
-        <div class="header-controls">
-          <button class="icon-btn" id="toggle-theme" title="Toggle theme">☾</button>
-          <button class="icon-btn" id="edit-top" title="Edit name and location">⚙</button>
+      <section id="user-instructions">
+        <p>👆 Click the <strong>⚙️ Settings</strong> button in the heading to add your name and location to get started!</p>
+        <button class="close-btn" id="close-instructions" title="Dismiss instructions">✕</button>
+      </section>
+      <section>
+        <div class="section-header header-main">
+          <h1 id="greeting">Hello!</h1>
+          <div class="header-controls">
+            <button class="icon-btn" id="toggle-theme" title="Toggle theme">☾</button>
+            <button class="icon-btn" id="edit-top" title="Edit name and location">⚙</button>
+          </div>
         </div>
-      </div>
-      <div id="weather">
         <div class="edit-panel hidden" id="top-panel">
           <button class="close-btn" id="close-top-panel" title="Close settings">✕</button>
           <input type="text" id="username-input" placeholder="Enter your name">
@@ -25,11 +29,13 @@
           <input type="text" id="city-input" placeholder="Enter city">
           <button id="get-weather">Get Weather</button>
         </div>
-        <div class="greeting-info">
-          <p id="date-time"></p>
-          <p id="weather-info">Weather info will appear here</p>
+        <div id="weather">
+          <div class="greeting-info">
+            <p id="date-time"></p>
+            <p id="weather-info">Weather info will appear here</p>
+          </div>
         </div>
-      </div>
+      </section>
     </header>
 
     <main>
@@ -139,7 +145,9 @@
     </main>
 
     <footer>
-      <p id="quote">Loading...</p>
+      <section>
+        <p id="quote">Loading...</p>
+      </section>
     </footer>
 
     <script src="script.js"></script>

@@ -1,4 +1,24 @@
 //** HEADER **//
+
+// Handle instructions dismissal
+function checkInstructionsVisibility() {
+  const instructionsDismissed = localStorage.getItem('instructionsDismissed');
+  const instructionsElement = document.getElementById('user-instructions');
+
+  if (instructionsDismissed === 'true') {
+    instructionsElement.style.display = 'none';
+  }
+}
+
+const closeInstructionsBtn = document.getElementById('close-instructions');
+if (closeInstructionsBtn) {
+  closeInstructionsBtn.addEventListener('click', () => {
+    const instructionsElement = document.getElementById('user-instructions');
+    instructionsElement.style.display = 'none';
+    localStorage.setItem('instructionsDismissed', 'true');
+  });
+}
+
 // Greeting + Username
 function setGreeting() {
   const hour = new Date().getHours();
@@ -639,19 +659,9 @@ function loadLinks() {
     a.textContent = link.name;
     a.target = "_blank";
 
-    // Button container for edit and delete
+    // Button container for delete
     const buttonContainer = document.createElement("div");
     buttonContainer.className = "link-buttons";
-
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "✎";
-    editBtn.className = "edit-btn";
-    editBtn.title = "Edit link";
-    editBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      editLink(index, li, a);
-    });
 
     const delBtn = document.createElement("button");
     delBtn.textContent = "🗑️";
@@ -659,7 +669,6 @@ function loadLinks() {
     delBtn.title = "Remove link";
     delBtn.addEventListener("click", () => removeLink(index));
 
-    buttonContainer.appendChild(editBtn);
     buttonContainer.appendChild(delBtn);
 
     const handle = document.createElement("span");
@@ -749,75 +758,6 @@ function removeLink(index) {
   loadLinks();
 }
 
-function editLink(index, liElement, aElement) {
-  const links = JSON.parse(localStorage.getItem("links")) || [];
-  const currentName = links[index].name;
-  const currentUrl = links[index].url;
-
-  // Create input fields
-  const nameInput = document.createElement("input");
-  nameInput.type = "text";
-  nameInput.value = currentName;
-  nameInput.className = "edit-input";
-  nameInput.placeholder = "Link name";
-
-  const urlInput = document.createElement("input");
-  urlInput.type = "url";
-  urlInput.value = currentUrl;
-  urlInput.className = "edit-input";
-  urlInput.placeholder = "Link URL";
-
-  const editContainer = document.createElement("div");
-  editContainer.className = "edit-container";
-  editContainer.appendChild(nameInput);
-  editContainer.appendChild(urlInput);
-
-  // Hide original link and insert edit form
-  aElement.style.display = "none";
-  liElement.insertBefore(editContainer, aElement);
-  nameInput.focus();
-  nameInput.select();
-
-  function saveEdit() {
-    const newName = nameInput.value.trim();
-    const newUrl = urlInput.value.trim();
-
-    if (newName && newUrl && (newName !== currentName || newUrl !== currentUrl)) {
-      links[index].name = newName;
-      links[index].url = newUrl;
-      localStorage.setItem("links", JSON.stringify(links));
-    }
-    loadLinks();
-  }
-
-  function cancelEdit() {
-    aElement.style.display = "";
-    editContainer.remove();
-  }
-
-  // Save on Enter in either input
-  [nameInput, urlInput].forEach(input => {
-    input.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        saveEdit();
-      } else if (e.key === "Escape") {
-        cancelEdit();
-      }
-    });
-  });
-
-  // Save on blur from the container
-  let blurTimeout;
-  editContainer.addEventListener("focusout", (e) => {
-    clearTimeout(blurTimeout);
-    blurTimeout = setTimeout(() => {
-      if (!editContainer.contains(document.activeElement)) {
-        saveEdit();
-      }
-    }, 100);
-  });
-}
-
 document.getElementById("add-link").addEventListener("click", addLink);
 
 // Add Enter key support for link inputs
@@ -844,7 +784,7 @@ function loadTasks() {
     li.className = task.completed ? "completed" : "";
     li.dataset.index = index;
 
-    // Create a flex container for handle + text
+    // Create a flex container for handle + checkbox + text
     const content = document.createElement("div");
     content.className = "task-content";
 
@@ -853,25 +793,24 @@ function loadTasks() {
     handle.textContent = "☰";
     handle.draggable = true;
 
+    // Add checkbox
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.className = "task-checkbox";
+    checkbox.checked = task.completed;
+    checkbox.addEventListener("change", () => toggleTask(index));
+
     const span = document.createElement("span");
     span.textContent = task.text;
-    span.addEventListener("click", () => toggleTask(index));
+    span.className = "task-text";
 
     content.appendChild(handle);
+    content.appendChild(checkbox);
     content.appendChild(span);
 
-    // Button container for edit and delete
+    // Button container for delete
     const buttonContainer = document.createElement("div");
     buttonContainer.className = "task-buttons";
-
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "✎";
-    editBtn.className = "edit-btn";
-    editBtn.title = "Edit task";
-    editBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      editTask(index, span);
-    });
 
     const delBtn = document.createElement("button");
     delBtn.textContent = "🗑️";
@@ -879,7 +818,6 @@ function loadTasks() {
     delBtn.title = "Delete task";
     delBtn.addEventListener("click", () => removeTask(index));
 
-    buttonContainer.appendChild(editBtn);
     buttonContainer.appendChild(delBtn);
 
     li.appendChild(content);
@@ -915,49 +853,6 @@ function removeTask(index) {
   tasks.splice(index, 1);
   localStorage.setItem("tasks", JSON.stringify(tasks));
   loadTasks();
-}
-
-function editTask(index, spanElement) {
-  const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  const currentText = tasks[index].text;
-
-  // Create input field
-  const input = document.createElement("input");
-  input.type = "text";
-  input.value = currentText;
-  input.className = "edit-input";
-
-  // Replace span with input
-  spanElement.style.display = "none";
-  spanElement.parentNode.insertBefore(input, spanElement);
-  input.focus();
-  input.select();
-
-  function saveEdit() {
-    const newText = input.value.trim();
-    if (newText && newText !== currentText) {
-      tasks[index].text = newText;
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-    }
-    loadTasks();
-  }
-
-  function cancelEdit() {
-    spanElement.style.display = "";
-    input.remove();
-  }
-
-  // Save on Enter, cancel on Escape
-  input.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-      saveEdit();
-    } else if (e.key === "Escape") {
-      cancelEdit();
-    }
-  });
-
-  // Save on blur (when clicking outside)
-  input.addEventListener("blur", saveEdit);
 }
 
 document.getElementById("add-task").addEventListener("click", addTask);
@@ -997,3 +892,4 @@ fetchNews();
 fetchQuote();
 loadTheme();
 setBackground();
+checkInstructionsVisibility();

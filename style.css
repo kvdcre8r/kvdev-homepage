@@ -10,6 +10,10 @@ Variables
   --text-muted: #9ca3af;
   --highlight-color: #e67e22;
   --card-bg: rgba(255, 255, 255, 0.9);
+  --logo-filter: brightness(0) invert(0.3);
+  --logo-filter-hover: brightness(0) invert(0.8);
+  --icon-filter: brightness(0) invert(0.7);
+  --icon-filter-hover: brightness(0) invert(0.4);
 }
 
 body.dark {
@@ -18,6 +22,10 @@ body.dark {
   --text-muted: #6b7280;
   --highlight-color: #fbbf24;
   --card-bg: rgba(55, 65, 81, 0.9);
+  --logo-filter: brightness(0) invert(0.8);
+  --logo-filter-hover: brightness(0) invert(0.3);
+  --icon-filter: brightness(0) invert(0.6);
+  --icon-filter-hover: brightness(0) invert(0.8);
 }
 
 /********************
@@ -34,8 +42,6 @@ body {
   max-width: 1200px;
   margin: auto;
 
-  header,
-  footer,
   section {
     background: var(--bg-color);
     padding: 0 20px 20px;
@@ -90,8 +96,9 @@ body {
     transition: all 0.2s;
     color: var(--text-muted);
     position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
     width: 1.5rem;
     height: 1.5rem;
     display: flex;
@@ -102,7 +109,7 @@ body {
   .close-btn:hover {
     color: var(--text-color);
     background-color: rgba(255, 0, 0, 0.1);
-    transform: scale(1.1);
+    transform: translateY(-50%) scale(1.1);
   }
 
   .edit-panel {
@@ -125,10 +132,19 @@ LANDMARKS
 /********************
 Header
 ********************/
+#user-instructions {
+  display: flex;
+  align-items: center;
+  padding-bottom: 5px;
+  padding-right: 3rem;
+  position: relative;
+  flex: 1;
+}
+
 .header-controls {
   display: flex;
-  gap: 10px;
   align-items: center;
+  gap: 10px;
 }
 
 .highlight {
@@ -136,15 +152,23 @@ Header
   font-weight: bold;
 }
 
-#greeting {
-  font-size: 2.2rem;
-  font-weight: 800;
-  margin: 20px 0 10px 0;
-  background: linear-gradient(135deg, var(--text-color) 0%, var(--highlight-color) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.header-main {
+
+  #greeting {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 20px 0 10px 0;
+    background: linear-gradient(135deg, var(--text-color) 0%, var(--highlight-color) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex-grow: 1;
+  }
+
+  .icon-btn {
+    margin-top: 10px;
+  }
 }
 
 @supports not (-webkit-background-clip: text) {
@@ -193,6 +217,17 @@ ul {
   list-style: none;
   padding: 0;
 
+  .drag-handle {
+    cursor: grab;
+    font-size: 1.2rem;
+    color: var(--highlight-color);
+    user-select: none;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
   li {
     display: flex;
     justify-content: space-between;
@@ -226,8 +261,7 @@ ul {
     border-radius: 3px;
   }
 
-  .delete-btn,
-  .edit-btn {
+  .delete-btn {
     background: transparent;
     border: none;
     font-size: 1rem;
@@ -236,61 +270,26 @@ ul {
     border-radius: 4px;
     transition: opacity 0.2s, background 0.2s;
     margin-right: 0px;
-    color: var(--text-muted);
+    filter: var(--icon-filter);
 
     &:hover {
       opacity: 1;
       background: rgba(59, 130, 246, 0.1);
-      color: var(--text-color);
+      filter: var(--icon-filter-hover);
     }
   }
 
   .task-content {
     display: flex;
     align-items: center;
-    cursor: pointer;
+    gap: 8px;
   }
-}
 
-/* Edit panels */
-.edit-input {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 0.9rem;
-  color: var(--text-color);
-  flex-grow: 1;
-  min-width: 100px;
-}
-
-.edit-input:focus {
-  outline: none;
-  border-color: var(--highlight-color);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-}
-
-.edit-container {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  flex-grow: 1;
-  margin-right: 8px;
-}
-
-.edit-container .edit-input:first-child {
-  font-weight: 500;
-}
-
-.drag-handle {
-  cursor: grab;
-  margin-right: 10px;
-  font-size: 1.2rem;
-  color: var(--highlight-color);
-  user-select: none;
-
-  &:active {
-    cursor: grabbing;
+  .task-checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--highlight-color);
   }
 }
 
@@ -346,12 +345,8 @@ body.dark #search-input:focus {
   img {
     width: 20px;
     height: 20px;
-    filter: brightness(0) invert(0.3);
+    filter: var(--logo-filter);
     margin: 0;
-  }
-
-  body.dark & img {
-    filter: brightness(0) invert(0.8);
   }
 
   &:hover {
@@ -361,11 +356,7 @@ body.dark #search-input:focus {
     transform: scale(1.05);
 
     img {
-      filter: brightness(0) invert(0.8);
-    }
-
-    body.dark & img {
-      filter: brightness(0) invert(0.3);
+      filter: var(--logo-filter-hover);
     }
   }
 }
@@ -495,6 +486,7 @@ body.dark #weather-timestamp {
   font-weight: 500;
   color: var(--text-color);
   opacity: 0.8;
+  margin-right: 5px;
 }
 
 .detail-value {
@@ -617,8 +609,24 @@ RESPONSIVE DESIGN
 }
 
 @media (max-width: 576px) {
-  #greeting {
-    font-size: 1.8rem;
+  .header-main #greeting {
+    font-size: 1.7rem;
+  }
+
+  .greeting-info p {
+    font-size: .9rem;
+  }
+
+  #user-instructions,
+  main,
+  footer {
+    font-size: .8rem;
+  }
+
+  body .icon-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.9rem;
   }
 
   .search-container {
