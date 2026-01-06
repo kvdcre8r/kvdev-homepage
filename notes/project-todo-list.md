@@ -16,6 +16,10 @@
 
 - fix edit search "save default" button height on smaller screens
 
+- check file structure from class project and update accordingly
+
+- update README file with new features, new file structure, and the project website
+
 ## New Sections
 
 ## Customization
