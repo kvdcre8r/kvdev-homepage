@@ -28,10 +28,18 @@
 
 - World clock
 
+- Quick notes
+
+- Calculator
+
 ## Customization
 
 - Themes
 
-- Font resizer
+- Font size controls
 
 - Choose and reorder sections
+
+- Background options 
+
+- Compact mode
