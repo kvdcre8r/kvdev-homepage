@@ -20,6 +20,18 @@
 
 - update README file with new features, new file structure, and the project website
 
+- add placeholder links and tasks
+
 ## New Sections
 
+- Calendar
+
+- World clock
+
 ## Customization
+
+- Themes
+
+- Font resizer
+
+- Choose and reorder sections
