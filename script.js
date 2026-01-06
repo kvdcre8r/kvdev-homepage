@@ -210,7 +210,42 @@ if (wikipediaSearchBtn) {
 if (searchInput) {
   searchInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-      performSearch('google'); // Default to Google on Enter
+      const defaultEngine = localStorage.getItem('defaultSearchEngine') || 'google';
+      performSearch(defaultEngine);
+    }
+  });
+}
+
+// Search settings functionality
+const editSearchBtn = document.getElementById('edit-search');
+const searchPanel = document.getElementById('search-panel');
+const closeSearchPanelBtn = document.getElementById('close-search-panel');
+const saveSearchDefaultBtn = document.getElementById('save-search-default');
+
+if (editSearchBtn) {
+  editSearchBtn.addEventListener('click', () => {
+    searchPanel.classList.remove('hidden');
+    // Load current default
+    const defaultEngine = localStorage.getItem('defaultSearchEngine') || 'google';
+    const radioButton = document.querySelector(`input[name="default-search"][value="${defaultEngine}"]`);
+    if (radioButton) {
+      radioButton.checked = true;
+    }
+  });
+}
+
+if (closeSearchPanelBtn) {
+  closeSearchPanelBtn.addEventListener('click', () => {
+    searchPanel.classList.add('hidden');
+  });
+}
+
+if (saveSearchDefaultBtn) {
+  saveSearchDefaultBtn.addEventListener('click', () => {
+    const selectedEngine = document.querySelector('input[name="default-search"]:checked')?.value;
+    if (selectedEngine) {
+      localStorage.setItem('defaultSearchEngine', selectedEngine);
+      searchPanel.classList.add('hidden');
     }
   });
 }
