@@ -2,6 +2,20 @@
 
 ## Design Tweaks
 
+- change color of "last updated" timestamps
+
+- change background color of header edit panel in dark mode
+
+- add magnifying glass search button to search bar
+
+- highlight default search engine in search section
+
+- fix weather details resizing issue
+
+- fix light mode and refresh icons centering issue
+
+- fix edit search "save default" button height on smaller screens
+
 ## New Sections
 
 ## Customization
