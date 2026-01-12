@@ -2,7 +2,7 @@
 
 ## Design Tweaks
 
-- change color of "last updated" timestamps
+- ~~change color of "last updated" timestamps~~
 
 - change background color of header edit panel in dark mode
 

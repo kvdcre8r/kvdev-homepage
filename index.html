@@ -10,9 +10,9 @@
   <body>
 
     <header>
-      <section id="user-instructions">
+      <section class="settings-tip" id="user-instructions">
         <p>👆 Click the <strong>⚙️ Settings</strong> button in the heading to add your name and location to get started!</p>
-        <button class="close-btn" id="close-instructions" title="Dismiss instructions">✕</button>
+        <button class="close-btn tip-btn" id="close-instructions" title="Dismiss instructions">✕</button>
       </section>
       <section>
         <div class="section-header header-main">
@@ -79,20 +79,20 @@
             <button class="icon-btn" id="refresh-news" title="Refresh news">↻</button>
           </div>
           <div class="section-content">
-            <div id="news-timestamp"></div>
+            <div class="timestamp" id="news-timestamp"></div>
             <ul class="list" id="news-list">
               <li>Loading news headlines...</li>
             </ul>
           </div>
         </section>
         <!-- Detailed Weather -->
-        <section>
+        <section class="weather-section">
           <div class="section-header">
             <h2>Weather Forecast</h2>
             <button class="icon-btn" id="refresh-forecast" title="Refresh forecast">↻</button>
           </div>
           <div class="section-content">
-            <div id="weather-timestamp"></div>
+            <div class="timestamp" id="weather-timestamp"></div>
             <div id="current-weather" class="weather-current">
               <div class="weather-today">
                 <div class="weather-main" title="Click to visit OpenWeatherMap">
