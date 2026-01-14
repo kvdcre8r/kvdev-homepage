@@ -91,8 +91,6 @@ document.getElementById("city-input").addEventListener("keypress", (e) => {
   }
 });
 
-loadCity();
-
 //** DYNAMIC BACKGROUND **//
 async function setBackground() {
   try {
@@ -164,6 +162,7 @@ const googleSearchBtn = document.getElementById('google-search');
 const duckduckgoSearchBtn = document.getElementById('duckduckgo-search');
 const youtubeSearchBtn = document.getElementById('youtube-search');
 const wikipediaSearchBtn = document.getElementById('wikipedia-search');
+const magnifySearchBtn = document.getElementById('magnify-search');
 
 function performSearch(engine) {
   const query = searchInput.value.trim();
@@ -189,21 +188,29 @@ function performSearch(engine) {
   searchInput.value = ''; // Clear the input
 }
 
-// Search button event listeners
+// Search button event listeners - clicking sets as default engine
 if (googleSearchBtn) {
-  googleSearchBtn.addEventListener('click', () => performSearch('google'));
+  googleSearchBtn.addEventListener('click', () => setDefaultSearchEngine('google'));
 }
 
 if (duckduckgoSearchBtn) {
-  duckduckgoSearchBtn.addEventListener('click', () => performSearch('duckduckgo'));
+  duckduckgoSearchBtn.addEventListener('click', () => setDefaultSearchEngine('duckduckgo'));
 }
 
 if (youtubeSearchBtn) {
-  youtubeSearchBtn.addEventListener('click', () => performSearch('youtube'));
+  youtubeSearchBtn.addEventListener('click', () => setDefaultSearchEngine('youtube'));
 }
 
 if (wikipediaSearchBtn) {
-  wikipediaSearchBtn.addEventListener('click', () => performSearch('wikipedia'));
+  wikipediaSearchBtn.addEventListener('click', () => setDefaultSearchEngine('wikipedia'));
+}
+
+// Magnifying glass search button
+if (magnifySearchBtn) {
+  magnifySearchBtn.addEventListener('click', () => {
+    const defaultEngine = localStorage.getItem('defaultSearchEngine') || 'google';
+    performSearch(defaultEngine);
+  });
 }
 
 // Enter key support
@@ -220,17 +227,13 @@ if (searchInput) {
 const editSearchBtn = document.getElementById('edit-search');
 const searchPanel = document.getElementById('search-panel');
 const closeSearchPanelBtn = document.getElementById('close-search-panel');
-const saveSearchDefaultBtn = document.getElementById('save-search-default');
+const saveSearchVisibilityBtn = document.getElementById('save-search-visibility');
 
 if (editSearchBtn) {
   editSearchBtn.addEventListener('click', () => {
     searchPanel.classList.remove('hidden');
-    // Load current default
-    const defaultEngine = localStorage.getItem('defaultSearchEngine') || 'google';
-    const radioButton = document.querySelector(`input[name="default-search"][value="${defaultEngine}"]`);
-    if (radioButton) {
-      radioButton.checked = true;
-    }
+    // Load current visibility settings
+    loadSearchEngineVisibility();
   });
 }
 
@@ -240,14 +243,92 @@ if (closeSearchPanelBtn) {
   });
 }
 
-if (saveSearchDefaultBtn) {
-  saveSearchDefaultBtn.addEventListener('click', () => {
-    const selectedEngine = document.querySelector('input[name="default-search"]:checked')?.value;
-    if (selectedEngine) {
-      localStorage.setItem('defaultSearchEngine', selectedEngine);
-      searchPanel.classList.add('hidden');
+if (saveSearchVisibilityBtn) {
+  saveSearchVisibilityBtn.addEventListener('click', () => {
+    saveSearchEngineVisibility();
+    updateSearchEngineDisplay();
+    searchPanel.classList.add('hidden');
+  });
+}
+
+// Function to load search engine visibility settings
+function loadSearchEngineVisibility() {
+  const visibleEngines = JSON.parse(localStorage.getItem('visibleSearchEngines')) || ['google', 'duckduckgo', 'youtube', 'wikipedia'];
+
+  const checkboxes = document.querySelectorAll('input[name="visible-search"]');
+  checkboxes.forEach(checkbox => {
+    checkbox.checked = visibleEngines.includes(checkbox.value);
+  });
+}
+
+// Function to save search engine visibility settings
+function saveSearchEngineVisibility() {
+  const checkedEngines = [];
+  const checkboxes = document.querySelectorAll('input[name="visible-search"]:checked');
+  checkboxes.forEach(checkbox => {
+    checkedEngines.push(checkbox.value);
+  });
+
+  // Ensure at least one search engine is visible
+  if (checkedEngines.length === 0) {
+    alert('At least one search engine must be visible!');
+    return false;
+  }
+
+  localStorage.setItem('visibleSearchEngines', JSON.stringify(checkedEngines));
+
+  // If the current default engine is hidden, change to the first visible one
+  const currentDefault = localStorage.getItem('defaultSearchEngine') || 'google';
+  if (!checkedEngines.includes(currentDefault)) {
+    localStorage.setItem('defaultSearchEngine', checkedEngines[0]);
+    updateDefaultSearchEngineHighlight();
+  }
+
+  return true;
+}
+
+// Function to show/hide search engine buttons based on visibility settings
+function updateSearchEngineDisplay() {
+  const visibleEngines = JSON.parse(localStorage.getItem('visibleSearchEngines')) || ['google', 'duckduckgo', 'youtube', 'wikipedia'];
+
+  const engines = ['google', 'duckduckgo', 'youtube', 'wikipedia'];
+  engines.forEach(engine => {
+    const button = document.getElementById(`${engine}-search`);
+    if (button) {
+      button.style.display = visibleEngines.includes(engine) ? 'flex' : 'none';
     }
   });
+}
+
+// Function to set default search engine when button is clicked
+function setDefaultSearchEngine(engine) {
+  localStorage.setItem('defaultSearchEngine', engine);
+  updateDefaultSearchEngineHighlight();
+
+  // Optional: Show brief visual feedback
+  const button = document.getElementById(`${engine}-search`);
+  if (button) {
+    // Add a temporary class for feedback animation
+    button.style.transform = 'scale(1.1)';
+    setTimeout(() => {
+      button.style.transform = '';
+    }, 150);
+  }
+}
+
+// Function to highlight the default search engine button
+function updateDefaultSearchEngineHighlight() {
+  const defaultEngine = localStorage.getItem('defaultSearchEngine') || 'google';
+
+  // Remove default-engine class from all search buttons
+  const allSearchBtns = document.querySelectorAll('.search-btn');
+  allSearchBtns.forEach(btn => btn.classList.remove('default-engine'));
+
+  // Add default-engine class to the current default button
+  const defaultBtn = document.getElementById(`${defaultEngine}-search`);
+  if (defaultBtn) {
+    defaultBtn.classList.add('default-engine');
+  }
 }
 
 //** NEWS HEADLINES **//
@@ -921,6 +1002,7 @@ function fetchQuote() {
 
 //** INITIAL LOAD **//
 setGreeting();
+loadCity();
 loadTasks();
 loadLinks();
 fetchNews();
@@ -928,3 +1010,5 @@ fetchQuote();
 loadTheme();
 setBackground();
 checkInstructionsVisibility();
+updateDefaultSearchEngineHighlight();
+updateSearchEngineDisplay();

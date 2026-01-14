@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Personalized Home Page</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/2e9e2f4f8b.js" crossorigin="anonymous"></script>
   </head>
 
   <body>
@@ -45,24 +46,27 @@
         <section class="search-section">
           <div class="section-header">
             <h2>Search</h2>
-            <button class="icon-btn" id="edit-search" title="Edit default search engine">✎</button>
+            <button class="icon-btn" id="edit-search" title="Edit visible search engines">✎</button>
           </div>
           <div class="section-content">
             <div class="edit-panel hidden" id="search-panel">
               <button class="close-btn" id="close-search-panel" title="Close search settings">✕</button>
-              <h4>Default Search Engine:</h4>
+              <h4>Visible Search Engines:</h4>
               <div class="search-options">
                 <div class="search-engines">
-                  <label><input type="radio" name="default-search" value="google" checked> Google</label>
-                  <label><input type="radio" name="default-search" value="duckduckgo"> DuckDuckGo</label>
-                  <label><input type="radio" name="default-search" value="youtube"> YouTube</label>
-                  <label><input type="radio" name="default-search" value="wikipedia"> Wikipedia</label>
+                  <label><input type="checkbox" name="visible-search" value="google" checked> Google</label>
+                  <label><input type="checkbox" name="visible-search" value="duckduckgo" checked> DuckDuckGo</label>
+                  <label><input type="checkbox" name="visible-search" value="youtube" checked> YouTube</label>
+                  <label><input type="checkbox" name="visible-search" value="wikipedia" checked> Wikipedia</label>
                 </div>
-                <button id="save-search-default">Save Default</button>
+                <button id="save-search-visibility">Save Settings</button>
               </div>
             </div>
             <div class="search-container">
-              <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
+              <div class="search-input-group">
+                <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
+                <button id="magnify-search" class="search-magnify-btn" title="Search with selected engine"><i class="fa-solid fa-magnifying-glass"></i></button>
+              </div>
               <div class="search-buttons">
                 <button id="google-search" class="search-btn" title="Google"><img src="/images/google-logo.png" alt="Google logo"></button>
                 <button id="duckduckgo-search" class="search-btn" title="DuckDuckGo"><img src="/images/duckduckgo-logo.png" alt="DuckDuckGo logo"></button>
